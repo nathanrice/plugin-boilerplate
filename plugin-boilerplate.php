@@ -22,91 +22,91 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class Plugin_Boilerplate {
 
-  /**
-   * Plugin version
-   */
-  public $plugin_version = 0.9.0;
+	/**
+	 * Plugin version
+	 */
+	public $plugin_version = 0.9.0;
 
-  /**
-   * The plugin textdomain, for translations.
-   */
-  public $plugin_textdomain = 'plugin-boilerplate';
+	/**
+	 * The plugin textdomain, for translations.
+	 */
+	public $plugin_textdomain = 'plugin-boilerplate';
 
-  /**
-   * The url to the plugin directory.
-   */
-  public $plugin_dir_url;
+	/**
+	 * The url to the plugin directory.
+	 */
+	public $plugin_dir_url;
 
-  /**
-   * The path to the plugin directory.
-   */
-  public $plugin_dir_path;
+	/**
+	 * The path to the plugin directory.
+	 */
+	public $plugin_dir_path;
 
-  /**
-   * Boilerplate feature object.
-   */
-  public $plugin_boilerplate_feature;
+	/**
+	 * Boilerplate feature object.
+	 */
+	public $plugin_boilerplate_feature;
 
-  /**
-   * Initialize.
-   *
-   * @since 0.9.0
-   */
-  public function init() {
+	/**
+	 * Initialize.
+	 *
+	 * @since 0.9.0
+	 */
+	public function init() {
 
-    $this->plugin_dir_url  = plugin_dir_url( __FILE__ );
-    $this->plugin_dir_path = plugin_dir_path( __FILE__ );
+		$this->plugin_dir_url	= plugin_dir_url( __FILE__ );
+		$this->plugin_dir_path = plugin_dir_path( __FILE__ );
 
-    register_activation_hook( __FILE__, array( $this, 'activation' ) );
+		register_activation_hook( __FILE__, array( $this, 'activation' ) );
 
-    $this->load_plugin_textdomain();
-    $this->instantiate();
+		$this->load_plugin_textdomain();
+		$this->instantiate();
 
-  }
+	}
 
-  /**
-   * Plugin activation hook. Runs when plugin is activated.
-   *
-   * @since 0.9.0
-   */
-  public function activation() {
+	/**
+	 * Plugin activation hook. Runs when plugin is activated.
+	 *
+	 * @since 0.9.0
+	 */
+	public function activation() {
 
 
-  }
+	}
 
-  /**
-   * Load the plugin textdomain, for translation.
-   *
-   * @since 0.9.0
-   */
-  public function load_plugin_textdomain() {
-    load_plugin_textdomain( $this->plugin_textdomain, false, $this->plugin_dir_path . 'languages/' );
-  }
+	/**
+	 * Load the plugin textdomain, for translation.
+	 *
+	 * @since 0.9.0
+	 */
+	public function load_plugin_textdomain() {
+		load_plugin_textdomain( $this->plugin_textdomain, false, $this->plugin_dir_path . 'languages/' );
+	}
 
-  /**
-   * Include the class file, instantiate the classes, create objects.
-   *
-   * @since 0.9.0
-   */
-  public function instantiate() {
+	/**
+	 * Include the class file, instantiate the classes, create objects.
+	 *
+	 * @since 0.9.0
+	 */
+	public function instantiate() {
 
-    /**
-     * For each feature, or naturally related groups of features, create a class file that contains a single class.
-     *
-     * Use this section to create the object after including the class file.
-     */
-    require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-feature.php' );
-    $this->plugin_boilerplate_feature = new Plugin_Boilerplate_Feature;
+		/**
+		 * For each feature, or naturally related groups of features, create a class file that contains a single class.
+		 *
+		 * Use this section to create the object after including the class file.
+		 */
+		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-feature.php' );
+		$this->plugin_boilerplate_feature = new Plugin_Boilerplate_Feature;
 
-    /**
-     * If you need to an a WP-CLI command, do it this way.
-     */
-    if ( defined( 'WP_CLI' ) && WP_CLI ) {
-      require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-cli-command.php' );
-      WP_CLI::add_command( 'plugin-boilerplate', 'Plugin_Boilerplate_CLI_Command' );
-    }
+		/**
+		 * If you need to an a WP-CLI command, do it this way.
+		 */
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-cli-command.php' );
+			WP_CLI::add_command( 'plugin-boilerplate', 'Plugin_Boilerplate_CLI_Command' );
+		}
 
-  }
+	}
 
 }
 
@@ -117,17 +117,17 @@ class Plugin_Boilerplate {
  */
 function Plugin_Boilerplate() {
 
-  static $object;
+	static $object;
 
-  if ( null == $object ) {
-    $object = new Plugin_Boilerplate;
-  }
+	if ( null == $object ) {
+		$object = new Plugin_Boilerplate;
+	}
 
-  return $object;
+	return $object;
 
 }
 
 /**
- * Initialize the object on  `plugins_loaded`.
+ * Initialize the object on	`plugins_loaded`.
  */
 add_action( 'plugins_loaded', array( Plugin_Boilerplate(), 'init' ) );
