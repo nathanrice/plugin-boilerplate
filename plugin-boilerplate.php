@@ -25,7 +25,7 @@ class Plugin_Boilerplate {
 	/**
 	 * Plugin version
 	 */
-	public $plugin_version = 0.9.0;
+	public $plugin_version = '0.9.0';
 
 	/**
 	 * The plugin textdomain, for translations.
