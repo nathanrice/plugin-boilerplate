@@ -48,14 +48,28 @@ class Plugin_Boilerplate {
 	public $plugin_boilerplate_feature;
 
 	/**
+	 * Boilerplate AJAX object.
+	 */
+	public $plugin_boilerplate_ajax;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 0.9.0
+	 */
+	public function __construct() {
+
+		$this->plugin_dir_url  = plugin_dir_url( __FILE__ );
+		$this->plugin_dir_path = plugin_dir_path( __FILE__ );
+
+	}
+
+	/**
 	 * Initialize.
 	 *
 	 * @since 0.9.0
 	 */
 	public function init() {
-
-		$this->plugin_dir_url	= plugin_dir_url( __FILE__ );
-		$this->plugin_dir_path = plugin_dir_path( __FILE__ );
 
 		register_activation_hook( __FILE__, array( $this, 'activation' ) );
 
@@ -69,10 +83,7 @@ class Plugin_Boilerplate {
 	 *
 	 * @since 0.9.0
 	 */
-	public function activation() {
-
-
-	}
+	public function activation() {}
 
 	/**
 	 * Load the plugin textdomain, for translation.
@@ -97,6 +108,15 @@ class Plugin_Boilerplate {
 		 */
 		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-feature.php' );
 		$this->plugin_boilerplate_feature = new Plugin_Boilerplate_Feature;
+
+		/**
+		 * Admin AJAX class object.
+		 *
+		 * Notice how if you need to register an admin menu/page, you need to hook that method to `genesis_admin_menu`.
+		 */
+		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-ajax.php' );
+		$this->plugin_boilerplate_ajax = new Plugin_Boilerplate_AJAX;
+		add_action( 'genesis_admin_menu', array( $this->plugin_boilerplate_ajax, 'admin_menu' ) );
 
 		/**
 		 * If you need to an a WP-CLI command, do it this way.
