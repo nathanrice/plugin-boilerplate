@@ -95,6 +95,17 @@ class Plugin_Boilerplate {
 	}
 
 	/**
+	 * Use this method to to general includes such as functions files or classes that won't be instantiated.
+	 *
+	 * @since 0.9.0
+	 */
+	public function includes() {
+
+		require_once( $this->plugin_dir_path . 'includes/functions.php' );
+
+	}
+
+	/**
 	 * Include the class file, instantiate the classes, create objects.
 	 *
 	 * @since 0.9.0
@@ -109,14 +120,9 @@ class Plugin_Boilerplate {
 		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-feature.php' );
 		$this->plugin_boilerplate_feature = new Plugin_Boilerplate_Feature;
 
-		/**
-		 * Admin AJAX class object.
-		 *
-		 * Notice how if you need to register an admin menu/page, you need to hook that method to `genesis_admin_menu`.
-		 */
-		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-ajax.php' );
-		$this->plugin_boilerplate_ajax = new Plugin_Boilerplate_AJAX;
-		add_action( 'genesis_admin_menu', array( $this->plugin_boilerplate_ajax, 'admin_menu' ) );
+		// Use admin_instantiate() to instantiate classes
+		// that depend on Genesis admin classes.
+		add_action( 'genesis_admin_menu', array( $this, 'admin_instantiate' ) );
 
 		/**
 		 * If you need to an a WP-CLI command, do it this way.
@@ -125,6 +131,19 @@ class Plugin_Boilerplate {
 			require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-cli-command.php' );
 			WP_CLI::add_command( 'plugin-boilerplate', 'Plugin_Boilerplate_CLI_Command' );
 		}
+
+	}
+
+	/**
+	 * Include the class file, instantiate the classes, create objects.
+	 *
+	 * @since 0.9.0
+	 */
+	public function admin_instantiate() {
+
+		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-ajax.php' );
+		$this->plugin_boilerplate_ajax = new Plugin_Boilerplate_AJAX;
+		$this->plugin_boilerplate_ajax();
 
 	}
 
