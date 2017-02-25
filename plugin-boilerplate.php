@@ -3,8 +3,8 @@
 Plugin Name: Plugin Boilerplate
 Plugin URI: https://github.com/copyblogger/plugin-boilerplate
 Description: A simple boilerplate for new WordPress plugins.
-Author: Rainmaker Digital, LLC.
-Author URI: http://rainmakerdigital.com/
+Author: Nathan Rice
+Author URI: http://nathanrice.net/
 
 Version: 0.9.0
 
@@ -20,7 +20,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
  *
  * @since 0.9.0
  */
-class Plugin_Boilerplate {
+final class Plugin_Boilerplate {
 
 	/**
 	 * Plugin version
@@ -74,6 +74,7 @@ class Plugin_Boilerplate {
 		register_activation_hook( __FILE__, array( $this, 'activation' ) );
 
 		$this->load_plugin_textdomain();
+		$this->includes();
 		$this->instantiate();
 
 	}
@@ -120,9 +121,13 @@ class Plugin_Boilerplate {
 		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-feature.php' );
 		$this->plugin_boilerplate_feature = new Plugin_Boilerplate_Feature;
 
-		// Use admin_instantiate() to instantiate classes
-		// that depend on Genesis admin classes.
-		add_action( 'genesis_admin_menu', array( $this, 'admin_instantiate' ) );
+		/**
+		 * Plugin or theme depencencies should be loaded via separate methods hooked to actions available in
+		 * the theme or plugin which they depend on.
+		 *
+		 * In this case, we're loading some Genesis dependent code.
+		 */
+		add_action( 'genesis_setup', array( $this, 'genesis_dependencies' ) );
 
 		/**
 		 * If you need to an a WP-CLI command, do it this way.
@@ -139,7 +144,7 @@ class Plugin_Boilerplate {
 	 *
 	 * @since 0.9.0
 	 */
-	public function admin_instantiate() {
+	public function genesis_dependencies() {
 
 		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-ajax.php' );
 		$this->plugin_boilerplate_ajax = new Plugin_Boilerplate_AJAX;
