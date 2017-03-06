@@ -71,11 +71,21 @@ final class Plugin_Boilerplate {
 	 */
 	public function init() {
 
-		register_activation_hook( __FILE__, array( $this, 'activation' ) );
+		//register_activation_hook( $this->plugin_dir_path . 'plugin.php', array( $this, 'activation' ) );
+		//add_action( 'admin_notices', array( $this, 'requirements_notice' ) );
 
-		$this->load_plugin_textdomain();
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+
+		/**
+		 * Plugin or theme depencencies should be hooked to actions available in
+		 * the theme or plugin which they depend on.
+		 *
+		 * Otherwise, you can call the includes/instantiate methods directly.
+		 */
 		$this->includes();
+		//add_action( 'genesis_setup', array( $this, 'includes' ) );
 		$this->instantiate();
+		//add_action( 'genesis_setup', array( $this, 'instantiate' ) );
 
 	}
 
@@ -86,13 +96,32 @@ final class Plugin_Boilerplate {
 	 */
 	public function activation() {}
 
+
+	/**
+	 * Show admin notice if minimum requirements aren't met.
+	 *
+	 * @since 0.9.0
+	 */
+	public function requirements_notice() {
+
+		if ( ! defined( 'PARENT_THEME_VERSION' ) || ! version_compare( PARENT_THEME_VERSION, $this->min_genesis_version, '>=' ) ) {
+
+			$action = defined( 'PARENT_THEME_VERSION' ) ? __( 'upgrade to', 'plugin-boilerplate' ) : __( 'install and activate', 'plugin-boilerplate' );
+
+			$message = sprintf( __( 'This plugin requires WordPress %s and <a href="%s" target="_blank">Genesis %s</a>, or greater. Please %s the latest version of Genesis to use this plugin.', 'plugin-boilerplate' ), $this->min_wp_version, 'http://my.studiopress.com/?download_id=91046d629e74d525b3f2978e404e7ffa', $this->min_genesis_version, $action );
+			echo '<div class="notice notice-warning"><p>' . $message . '</p></div>';
+
+		}
+
+	}
+
 	/**
 	 * Load the plugin textdomain, for translation.
 	 *
 	 * @since 0.9.0
 	 */
 	public function load_plugin_textdomain() {
-		load_plugin_textdomain( $this->plugin_textdomain, false, $this->plugin_dir_path . 'languages/' );
+		load_plugin_textdomain( $this->plugin_textdomain, false, dirname( plugin_basename( __FILE__ ) ) . 'languages/' );
 	}
 
 	/**
@@ -122,33 +151,12 @@ final class Plugin_Boilerplate {
 		$this->plugin_boilerplate_feature = new Plugin_Boilerplate_Feature;
 
 		/**
-		 * Plugin or theme depencencies should be loaded via separate methods hooked to actions available in
-		 * the theme or plugin which they depend on.
-		 *
-		 * In this case, we're loading some Genesis dependent code.
-		 */
-		add_action( 'genesis_setup', array( $this, 'genesis_dependencies' ) );
-
-		/**
 		 * If you need to an a WP-CLI command, do it this way.
 		 */
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-cli-command.php' );
 			WP_CLI::add_command( 'plugin-boilerplate', 'Plugin_Boilerplate_CLI_Command' );
 		}
-
-	}
-
-	/**
-	 * Include the class file, instantiate the classes, create objects.
-	 *
-	 * @since 0.9.0
-	 */
-	public function genesis_dependencies() {
-
-		require_once( $this->plugin_dir_path . 'includes/class-plugin-boilerplate-ajax.php' );
-		$this->plugin_boilerplate_ajax = new Plugin_Boilerplate_AJAX;
-		$this->plugin_boilerplate_ajax();
 
 	}
 
