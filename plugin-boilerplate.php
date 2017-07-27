@@ -27,6 +27,17 @@ final class Plugin_Boilerplate {
 	 */
 	public $plugin_version = '0.9.0';
 
+
+	/**
+	 * Minimum WordPress version.
+	 */
+	public $min_wp_version = '4.8';
+
+	/**
+	 * Minimum Genesis version.
+	 */
+	public $min_genesis_version = '2.5';
+
 	/**
 	 * The plugin textdomain, for translations.
 	 */
