@@ -82,49 +82,24 @@ final class Plugin_Boilerplate {
 	 */
 	public function init() {
 
+		$this->load_plugin_textdomain();
+
 		//register_activation_hook( $this->plugin_dir_path . 'plugin.php', array( $this, 'activation' ) );
 		//add_action( 'admin_notices', array( $this, 'requirements_notice' ) );
 
-		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+		// Do not run unless minimum version requirements are met.
+		if ( ! $this->meets_min_reqs() ) {
+			return;
+		}
 
 		/**
 		 * Plugin or theme depencencies should be hooked to actions available in
 		 * the theme or plugin which they depend on.
 		 *
-		 * Otherwise, you can call the includes/instantiate methods directly.
+		 * Otherwise, you can call the load method directly.
 		 */
-		$this->includes();
-		//add_action( 'genesis_setup', array( $this, 'includes' ) );
-		$this->instantiate();
-		//add_action( 'genesis_setup', array( $this, 'instantiate' ) );
-
-	}
-
-	/**
-	 * Plugin activation hook. Runs when plugin is activated.
-	 *
-	 * @since 0.9.0
-	 */
-	public function activation() {}
-
-
-	/**
-	 * Show admin notice if minimum requirements aren't met.
-	 *
-	 * @since 0.9.0
-	 */
-	public function requirements_notice() {
-
-		if ( ! defined( 'PARENT_THEME_VERSION' ) || ! version_compare( PARENT_THEME_VERSION, $this->min_genesis_version, '>=' ) ) {
-
-			$plugin = get_plugin_data( __FILE__ );
-
-			$action = defined( 'PARENT_THEME_VERSION' ) ? __( 'upgrade to', 'plugin-boilerplate' ) : __( 'install and activate', 'plugin-boilerplate' );
-
-			$message = sprintf( __( '%s requires WordPress %s and <a href="%s" target="_blank">Genesis %s</a>, or greater. Please %s the latest version of Genesis to use this plugin.', 'plugin-boilerplate' ), $plugin['name'], $this->min_wp_version, 'http://my.studiopress.com/?download_id=91046d629e74d525b3f2978e404e7ffa', $this->min_genesis_version, $action );
-			echo '<div class="notice notice-warning"><p>' . $message . '</p></div>';
-
-		}
+		$this->load();
+		//add_action( 'genesis_setup', array( $this, 'load' ) );
 
 	}
 
@@ -138,13 +113,50 @@ final class Plugin_Boilerplate {
 	}
 
 	/**
-	 * Use this method to to general includes such as functions files or classes that won't be instantiated.
+	 * Plugin activation hook. Runs when plugin is activated.
 	 *
 	 * @since 0.9.0
 	 */
-	public function includes() {
+	public function activation() {}
 
-		require_once( $this->plugin_dir_path . 'includes/functions.php' );
+	/**
+	 * Checks to see if Genesis and WordPress versions meet mimumum requirements to run this plugin.
+	 *
+	 * @since 0.9.1
+	 */
+	public function meets_min_reqs() {
+
+		// Minimum Genesis version requirement
+		if ( ! defined( 'PARENT_THEME_VERSION' ) || ! version_compare( PARENT_THEME_VERSION, $this->min_genesis_version, '>=' ) ) {
+			return false;
+		}
+
+		global $wp_version;
+
+		// Minimum WordPress version requirement
+		if ( ! $wp_version || ! version_compare( $wp_version, $this->min_wp_version, '>=' ) ) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	/**
+	 * Show admin notice if minimum requirements aren't met.
+	 *
+	 * @since 0.9.0
+	 */
+	public function requirements_notice() {
+
+		if ( ! $this->meets_min_reqs() ) {
+
+			$plugin = get_plugin_data( __FILE__ );
+
+			$message = sprintf( __( '%s requires WordPress %s and <a href="%s" target="_blank">Genesis %s</a>, or greater. To use this plugin, please upgrade/install the latest version of WordPress and Genesis.', 'plugin-boilerplate' ), $plugin['Name'], $this->min_wp_version, 'http://my.studiopress.com/?download_id=91046d629e74d525b3f2978e404e7ffa', $this->min_genesis_version );
+			echo '<div class="notice notice-warning"><p>' . $message . '</p></div>';
+
+		}
 
 	}
 
@@ -153,7 +165,7 @@ final class Plugin_Boilerplate {
 	 *
 	 * @since 0.9.0
 	 */
-	public function instantiate() {
+	public function load() {
 
 		/**
 		 * For each feature, or naturally related groups of features, create a class file that contains a single class.
